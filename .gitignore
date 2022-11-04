@@ -1,0 +1,13 @@
+*.log
+*.pyc
+media
+db.sqlite3
+local_settings.py
+env/
+vscode/
+.vscode/
+.env
+.DS_Store
+
+node_modules/
+sites/
