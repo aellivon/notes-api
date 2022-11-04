@@ -1,0 +1,54 @@
+version: "3"
+
+services:
+  db:
+    image: postgis/postgis:15-master
+    container_name: db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - data:/var/lib/postgresql/data
+
+  web:
+    container_name: web
+    build: .
+    env_file: .env
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+# cache:
+#   image: redis:alpine
+
+# celery:
+#   build:
+#     context: .
+#     dockerfile: ./Dockerfile.celery
+#   command: celery -A afloat worker -l info
+#   volumes:
+#     - .:/code
+#   env_file: .env
+#   depends_on:
+#     - cache
+
+# celery-beat:
+#   build:
+#     context: .
+#     dockerfile: ./Dockerfile.celery
+#   command: celery -A afloat beat -l info
+#   volumes:
+#     - .:/code
+#   env_file: .env
+#   depends_on:
+#     - cache
+
+
+volumes:
+  data:
