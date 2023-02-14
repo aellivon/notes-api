@@ -46,6 +46,9 @@ DJANGO_APPS = [
 AUTH_USER_MODEL = "users.User"
 
 THIRD_PARTY_APPS = [
+    'rest_framework',
+    'rest_framework.authtoken',
+    'dj_rest_auth'
 ]
 
 LOCAL_APPS = [
