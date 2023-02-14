@@ -2,8 +2,6 @@ from django.urls import include, path
 
 urlpatterns = []
 
-auth_urls = [
-    # path("auth/", include("dj_rest_auth.urls")),
-]
+auth_urls = []
 
 urlpatterns += auth_urls

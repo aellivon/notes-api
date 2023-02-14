@@ -102,18 +102,6 @@ DATABASES = {
     }
 }
 
-# Authentication
-
-# REST_FRAMEWORK = {
-#     "DEFAULT_AUTHENTICATION_CLASSES": (
-#         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
-#     ),
-#     "DEFAULT_PAGINATION_CLASS": "core.pagination.StandardResultsSetPagination",
-#     "PAGE_SIZE": 100,
-# }
-
-REST_USE_JWT = True
-
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
