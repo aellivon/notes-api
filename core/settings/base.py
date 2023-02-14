@@ -34,7 +34,7 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", default=[], cast=Csv())
 
 # Application definition
 
-INSTALLED_APPS = [
+DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,6 +42,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
+AUTH_USER_MODEL = "users.User"
+
+THIRD_PARTY_APPS = [
+    "rest_framework",
+    "rest_framework.authtoken",
+    "dj_rest_auth",
+]
+
+LOCAL_APPS = [
+    'users'
+]
+
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -88,6 +102,17 @@ DATABASES = {
     }
 }
 
+# Authentication
+
+# REST_FRAMEWORK = {
+#     "DEFAULT_AUTHENTICATION_CLASSES": (
+#         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
+#     ),
+#     "DEFAULT_PAGINATION_CLASS": "core.pagination.StandardResultsSetPagination",
+#     "PAGE_SIZE": 100,
+# }
+
+REST_USE_JWT = True
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
