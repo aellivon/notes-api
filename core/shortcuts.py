@@ -1,6 +1,3 @@
-from django.core.exceptions import PermissionDenied
-
-
 def _get_queryset(klass):
     """
         # NOTE: Taken from django code base itself. We could do a lot of things

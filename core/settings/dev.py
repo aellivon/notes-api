@@ -1,12 +1,12 @@
 import tempfile
 
-from .base import *
+from .base import *  # noqa: F403
 
 
-INSTALLED_APPS += (
+INSTALLED_APPS += (  # noqa: F405
     "naomi",
 )
 
 # To avoid sending data real clients in the future, do a naomi backend
-EMAIL_BACKEND="naomi.mail.backends.naomi.NaomiBackend"
+EMAIL_BACKEND = "naomi.mail.backends.naomi.NaomiBackend"
 EMAIL_FILE_PATH = tempfile.gettempdir()
