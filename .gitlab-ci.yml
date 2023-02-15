@@ -1,24 +1,29 @@
-image: "python:3.10"
-
-before_script:
-  - apt-get -qq update && apt-get -qq install -y python
-  - apt-get -qq update
-  - apt-get -qq install -y python python-virtualenv python-pip
-  - virtualenv venv
-  - . venv/bin/activate
-  - pip install -r requirements.txt
-
 stages:
+  - Build
   - Python Lint
   - Django Tests
 
-flake8:
+myJob:
+  stage: Build
+  image: python:3.10
+  script:
+    - apt-get update -q -y
+    - apt-get install -y python-pip
+    - python -V
+    - echo "hello world"
+    - pip install -r requirements.txt
+  artifacts:
+    untracked: true
+
+myJob2:
   stage: Python Lint
+  image: python:3.10
   script:
     - flake8
 
-test:
+myJob3:
   stage: Django Tests
+  image: python:3.10
   script:
     # this configures Django application to use attached postgres database that is run on `postgres` host
     - export DATABASE_URL=postgres://postgres:@postgres:5432/python-test-app
