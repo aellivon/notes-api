@@ -1,5 +1,13 @@
 image: "python:3.10"
 
+services:
+  - postgres:12.2-alpine
+
+variables:
+  POSTGRES_DB: project_ci_test
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: ""
+
 before_script:
   - apt-get update -qy
   - apt-get install -y python3-dev python3-pip  
@@ -18,6 +26,6 @@ test:
   stage: Django Tests
   script:
     # this configures Django application to use attached postgres database that is run on `postgres` host
-    - export DATABASE_URL=postgres://postgres:@postgres:5432/python-test-app
+    - export DATABASE_URL=postgres://postgres:@postgres:5432/project_ci_test
     # Runs tests everytime a commit is created to check that all test is passing
     - python manage.py test
