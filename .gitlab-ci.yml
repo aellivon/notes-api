@@ -1,8 +1,11 @@
-image: "python:3.10.0-alpine"
+image: "python:3.10
 
 before_script:
-  - apt-get update -qy
-  - apt-get install -y python-dev python-pip  
+  - apt-get update && apt-get install -y \
+    binutils \
+    libproj-dev \
+    gdal-bin \
+    git 
   - pip install -r requirements.txt
 
 stages:
