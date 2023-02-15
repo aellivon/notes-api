@@ -97,8 +97,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': config('DATABASE_NAME', default="project_ci_test"),
         'USER': config('DATABASE_USER', default="postgres"),
-        'PASSWORD': config('DATABASE_PASSWORD', default=""),
-        'HOST': config('DATABASE_HOST', default="db"),
+        'PASSWORD': config('DATABASE_PASSWORD', default="password"),
+        'HOST': config('DATABASE_HOST', default="postgres"),
     }
 }
 
