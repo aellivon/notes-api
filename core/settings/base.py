@@ -29,7 +29,7 @@ SECRET_KEY = config('SECRET_KEY', default="(d4$m=39&ith(mgc4ce&rq&2x-r7*snbj1uw2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=False, cast=bool)
 
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default=[], cast=Csv())
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default='', cast=Csv())
 
 
 # Application definition
