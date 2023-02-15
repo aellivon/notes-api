@@ -2,6 +2,7 @@ image: "python:3.10"
 
 services:
   - postgres:12.2-alpine
+  alias: db
 
 variables:
   POSTGRES_DB: project_ci_test
