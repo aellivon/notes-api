@@ -1,29 +1,21 @@
+image: "python:3.10"
+
+before_script:
+  - apt-get update -qy
+  - apt-get install -y python3-dev python3-pip  
+  - pip install -r requirements.txt
+
 stages:
-  - Build
   - Python Lint
   - Django Tests
 
-myJob:
-  stage: Build
-  image: python:3.10
-  script:
-    - apt-get update -q -y
-    - apt-get install -y python-pip
-    - python -V
-    - echo "hello world"
-    - pip install -r requirements.txt
-  artifacts:
-    untracked: true
-
-myJob2:
+flake8:
   stage: Python Lint
-  image: python:3.10
   script:
     - flake8
 
-myJob3:
+test:
   stage: Django Tests
-  image: python:3.10
   script:
     # this configures Django application to use attached postgres database that is run on `postgres` host
     - export DATABASE_URL=postgres://postgres:@postgres:5432/python-test-app
