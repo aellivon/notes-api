@@ -27,6 +27,6 @@ test:
   stage: Django Tests
   script:
     # this configures Django application to use attached postgres database that is run on `postgres` host
-    - export DATABASE_URL=postgres://postgres:@postgres:5432/project_ci_test
+    - export DATABASE_URL=postgres://postgres:@db:5432/project_ci_test
     # Runs tests everytime a commit is created to check that all test is passing
     - python manage.py test
