@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 
 from pathlib import Path
+from datetime import timedelta
 
 from decouple import Csv, config
 
@@ -34,6 +35,10 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", default='', cast=Csv())
 
 # Application definition
 
+LOCAL_APPS = [
+    'users.apps.UsersConfig'
+]
+
 DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -52,11 +57,8 @@ THIRD_PARTY_APPS = [
     'corsheaders',
 ]
 
-LOCAL_APPS = [
-    'users'
-]
 
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+INSTALLED_APPS = LOCAL_APPS + DJANGO_APPS + THIRD_PARTY_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -112,8 +114,19 @@ REST_FRAMEWORK = {
 }
 
 REST_AUTH = {
+    'USER_DETAILS_SERIALIZER': 'users.serializers.UserDetailsSerializer',
     'USE_JWT': True,
+    'JWT_AUTH_HTTPONLY': False
 }
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+}
+
+JWT_AUTH_COOKIE = "core-auth"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
