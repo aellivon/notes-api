@@ -22,6 +22,12 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     first_name = factory.LazyAttribute(lambda o: fake.first_name())
     last_name = factory.LazyAttribute(lambda o: fake.last_name())
+
+    furigana_fname = factory.LazyAttribute(lambda o: fake.first_name())
+    furigana_lname = factory.LazyAttribute(lambda o: fake.last_name())
+    position = factory.LazyAttribute(lambda o: fake.word())
+    avatar_url = factory.django.ImageField(color='blue')
+
     password = make_password('password')
 
     is_superuser = False

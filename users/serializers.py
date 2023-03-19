@@ -1,7 +1,13 @@
 from dj_rest_auth.serializers import UserDetailsSerializer
 from django.contrib.auth import get_user_model
 
+from rest_framework import serializers
+
+from .models import Division
+
+
 UserModel = get_user_model()
+
 
 class UserDetailsSerializer(UserDetailsSerializer):
     """
@@ -22,6 +28,40 @@ class UserDetailsSerializer(UserDetailsSerializer):
             extra_fields.append('first_name')
         if hasattr(UserModel, 'last_name'):
             extra_fields.append('last_name')
+        if hasattr(UserModel, 'display_name'):
+            extra_fields.append('display_name')
+        if hasattr(UserModel, 'avatar_url'):
+            extra_fields.append('avatar_url')
         model = UserModel
         fields = ('id', *extra_fields)
-        read_only_fields = ('email',)
+        read_only_fields = ('id', *extra_fields)
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """
+        This serializer is for serializing User Models
+    """
+    class Meta:
+        model = get_user_model()
+        fields = (
+            'id', 'first_name', 'last_name', 'email', 'furigana_lname', 'furigana_fname',
+            'position', 'avatar_url', 'date_joined', 'display_name'
+        )
+        read_only_fields = (
+            'id', 'first_name', 'last_name', 'email', 'furigana_lname', 'furigana_fname',
+            'position', 'avatar_url', 'date_joined', 'display_name'
+        )
+
+
+class DivisionSerializer(serializers.ModelSerializer):
+    """
+        This serializer is for serializing User Models
+    """
+    class Meta:
+        model = Division
+        fields = (
+            'id', 'name',
+        )
+        read_only_fields = (
+            'id', 'name',
+        )
