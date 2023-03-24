@@ -16,6 +16,7 @@ class CommonInfo(models.Model):
     """
         This class is the parent class for all the models
     """
+
     is_active = models.BooleanField(default=True)
     date_updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -29,3 +30,6 @@ class CommonInfo(models.Model):
 
     class Meta:
         abstract = True
+        permissions = [
+            ('rest_list', 'Can list on rest api'),
+        ]

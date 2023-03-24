@@ -127,6 +127,10 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
 }
 
+AUTHENTICATION_BACKENDS = [
+    'core.backends.ModelBackend',
+]
+
 JWT_AUTH_COOKIE = "core-auth"
 
 # Password validation

@@ -1,8 +1,14 @@
 from rest_framework import filters
 
 
-class CustomSearchFilter(filters.SearchFilter):
-    def get_search_fields(self, view, request):
-        if request.query_params.get('title_only'):
-            return ['title']
-        return super().get_search_fields(view, request)
+class UserDivisionFilter(filters.BaseFilterBackend):
+    """
+    Filter that checks if it belongs to a specific division
+    """
+
+    def filter_queryset(self, request, queryset, view):
+
+        division = request.query_params.get("division", "*")
+        if division == "*":
+            return queryset
+        return queryset.filter(division_set__pk=division)

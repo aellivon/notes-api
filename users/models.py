@@ -22,10 +22,11 @@ def profile_directory_path(instance, filename):
     return "profile_pictures/{0}.{1}".format(new_filename, filename.split(".")[-1])
 
 
-class User(AbstractBaseUser, PermissionsMixin, CommonInfo):
+class User(CommonInfo, AbstractBaseUser, PermissionsMixin):
     """
         overriding user model
     """
+
     first_name = models.CharField(max_length=225)
     last_name = models.CharField(max_length=225)
     email = models.EmailField(max_length=500, unique=True)
@@ -72,12 +73,12 @@ class User(AbstractBaseUser, PermissionsMixin, CommonInfo):
 
 
 class Division(CommonInfo):
-    """User Divisions, similar to group but is more concerned on actual rather than authorizations"""
+    """User Divisions, similar to group but is more concerned on actual groups rather than authorizations"""
 
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
-    members = models.ManyToManyField(User, related_name="user_divisions", through="DivisionMember")
+    members = models.ManyToManyField(User, related_name="division_set", through="DivisionMember")
 
     def __str__(self):
         return f"{self.name}"
