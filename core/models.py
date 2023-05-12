@@ -21,7 +21,7 @@ class CommonInfo(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
-    # This allows me to escape to default django query set if
+    # This allows us to escape to default django query set if
     #   later in the project I need it
     all_objects = models.Manager()
 

@@ -1,5 +1,6 @@
 from dj_rest_auth.serializers import UserDetailsSerializer
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 
 from rest_framework import serializers
 
@@ -59,6 +60,20 @@ class DivisionSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Division
+        fields = (
+            'id', 'name',
+        )
+        read_only_fields = (
+            'id', 'name',
+        )
+
+
+class GroupSerializer(serializers.ModelSerializer):
+    """
+        This serializer is for serializing User Models
+    """
+    class Meta:
+        model = Group
         fields = (
             'id', 'name',
         )

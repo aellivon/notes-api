@@ -1,7 +1,7 @@
 import datetime
 import hashlib
 
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
 from django.db import models
 from core.models import CommonInfo
 
@@ -59,11 +59,11 @@ class User(CommonInfo, AbstractBaseUser, PermissionsMixin):
 
     @property
     def fullname(self):
-        return f"{self.furigana_fname} {self.furigana_lname}".title()
+        return f"{self.first_name} {self.last_name}".title()
 
     @property
     def display_name(self):
-        if self.furigana_fname and self.furigana_lname:
+        if self.first_name and self.last_name:
             return self.fullname
         return f"{self.email}"
 
@@ -83,7 +83,7 @@ class Division(CommonInfo):
     def __str__(self):
         return f"{self.name}"
 
-    class Meta:
+    class Meta(CommonInfo.Meta):
         verbose_name = "Division"
         verbose_name_plural = "Divisions"
 
@@ -91,3 +91,6 @@ class Division(CommonInfo):
 class DivisionMember(CommonInfo):
     division = models.ForeignKey(Division, related_name="members_of_division", on_delete=models.CASCADE)
     user = models.ForeignKey(User, related_name="division_member", on_delete=models.CASCADE)
+
+
+Group.add_to_class('code_reference', models.CharField(max_length=180, null=True, blank=True, unique=True))

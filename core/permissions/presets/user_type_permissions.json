@@ -1,0 +1,5 @@
+{
+    "rest_admin": [
+        "users.management"
+    ]
+}

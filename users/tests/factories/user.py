@@ -2,10 +2,12 @@ import factory
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
+from core.shortcuts import convert_to_furigana, convert_to_ascii
 
-from faker import Faker
+from faker import Factory
 
-fake = Faker()
+
+fake = Factory.create('ja_JP')
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -16,15 +18,20 @@ class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = get_user_model()
 
-    email = factory.Sequence(
-        lambda o: f'{fake.first_name()}{fake.last_name()}{o}@{fake.free_email_domain()}'.lower()
+    first_name = factory.LazyAttribute(lambda o: fake.first_name())
+    last_name = factory.Sequence(
+        lambda n: f'{fake.last_name()}{n}'
+    )
+    email = factory.LazyAttribute(
+        lambda o: f'{convert_to_ascii(o.first_name)}_{convert_to_ascii(o.last_name)}@{fake.free_email_domain()}'.lower()
     )
 
-    first_name = factory.LazyAttribute(lambda o: fake.first_name())
-    last_name = factory.LazyAttribute(lambda o: fake.last_name())
-
-    furigana_fname = factory.LazyAttribute(lambda o: fake.first_name())
-    furigana_lname = factory.LazyAttribute(lambda o: fake.last_name())
+    furigana_fname = factory.LazyAttribute(
+        lambda o: convert_to_furigana(o.first_name)
+    )
+    furigana_lname = factory.LazyAttribute(
+        lambda o: convert_to_furigana(o.last_name)
+    )
     position = factory.LazyAttribute(lambda o: fake.word())
     avatar_url = factory.django.ImageField(color='blue')
 

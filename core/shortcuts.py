@@ -1,3 +1,6 @@
+import pykakasi
+
+
 def _get_queryset(klass):
     """
         # NOTE: Taken from django code base itself. We could do a lot of things
@@ -32,3 +35,21 @@ def get_object_or_None(klass, *args, **kwargs):
         return queryset.get(*args, **kwargs)
     except queryset.model.DoesNotExist:
         return None
+
+
+def convert_to_furigana(text):
+    kks = pykakasi.kakasi()
+    result = kks.convert(text)
+    stacked_result = ""
+    for item in result:
+        stacked_result += item["hira"]
+    return stacked_result
+
+
+def convert_to_ascii(text):
+    kks = pykakasi.kakasi()
+    result = kks.convert(text)
+    stacked_result = ""
+    for item in result:
+        stacked_result += item["hepburn"]
+    return stacked_result

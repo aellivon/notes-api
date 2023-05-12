@@ -1,0 +1,6 @@
+{
+    "users.management": [
+        "user.rest_list",
+        "division.rest_list"
+    ]
+}
