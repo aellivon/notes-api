@@ -6,14 +6,14 @@ from core.permissions.base import RestBasePermission
 
 from .serializers import UserSerializer, DivisionSerializer, GroupSerializer
 from .models import Division
-from .filters import UserDivisionFilter, StringUserStatusFilter
+from .filters import UserDivisionFilter, StringUserStatusFilter, AdminStatusFilter
 
 
-class UserViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
+class UserViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateModelMixin):
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
     permission_classes = [RestBasePermission]
-    filter_backends = [filters.SearchFilter, UserDivisionFilter, StringUserStatusFilter]
+    filter_backends = [filters.SearchFilter, UserDivisionFilter, StringUserStatusFilter, AdminStatusFilter]
     search_fields = [
         'first_name', 'last_name', 'email', 'furigana_fname', 'furigana_lname',
         'position', "id"
