@@ -39,7 +39,9 @@ class BaseWebTestCases(APITestCase):
         self.inactive_user = UserFactory(is_active=False)
         self.other_user = UserFactory()
 
-    def login(self, email, login_scheme="", password=None):
+    def login(self, user, login_scheme="", password=None):
+
+        email = user.email
 
         if not password:
             password = self.default_password
@@ -56,31 +58,31 @@ class BaseWebTestCases(APITestCase):
         """
             Logins an active user to our client
         """
-        self.login(self.active_user.email, login_scheme)
+        self.login(self.active_user, login_scheme)
 
     def login_inactive_user(self, login_scheme=""):
         """
             Logins an inactive user to our client
         """
-        self.login(self.inactive_user.email, login_scheme)
+        self.login(self.inactive_user, login_scheme)
 
     def login_other_user(self, login_scheme=""):
         """
             Logins as other user to test permissions
         """
-        self.login(self.other_user.email, login_scheme)
+        self.login(self.other_user, login_scheme)
 
     def login_super_user(self, login_scheme=""):
         """
             Logins super user
         """
-        self.login(self.super_user.email, login_scheme)
+        self.login(self.super_user, login_scheme)
 
     def login_staff_user(self, login_scheme=""):
         """
             Logins staff user
         """
-        self.login(self.staff_user.email, login_scheme)
+        self.login(self.staff_user, login_scheme)
 
     def _get_app_and_base_name(self):
         """

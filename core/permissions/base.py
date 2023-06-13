@@ -25,9 +25,26 @@ class DjangoCoreModelPermissions(permissions.DjangoModelPermissions):
         'DELETE': permissions.DjangoModelPermissions.perms_map['DELETE'],
     }
 
-    def has_permission(self, request, view):
+    def has_permission(self, request, view, delay_decision=False, from_object_permission=False):
 
         if request.user.is_superuser:
             return True
+        if request.method == "PATCH" and not from_object_permission:
+            # We need to check if the object is the logged in user or not
+            delay_decision = True
 
-        return super().has_permission(request, view)
+        if from_object_permission:
+            delay_decision = False
+
+        if not delay_decision:
+            return super().has_permission(request, view)
+        else:
+            return True
+
+    def has_object_permission(self, request, view, obj):
+        queryset = self._queryset(view)
+        if queryset.model._meta.model_name == "user":
+            if request.user.pk == obj.pk:
+                return True
+
+        return self.has_permission(request, view, delay_decision=False, from_object_permission=True)

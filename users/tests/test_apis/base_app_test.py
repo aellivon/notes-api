@@ -1,4 +1,5 @@
 from core.tests.base_test import BaseWebTestCases
+from faker import Faker
 from django.contrib.auth.models import Permission
 from users.tests.factories.user import UserFactory
 from users.tests.factories.group import GroupFactory
@@ -8,6 +9,8 @@ class UserTestCases(BaseWebTestCases):
     """
        Base test for users
     """
+
+    fake = Faker()
 
     user_manager = None
     app_name = "users"
@@ -20,22 +23,24 @@ class UserTestCases(BaseWebTestCases):
         """
             Logins an active user to our client
         """
-        self.login(self.user_manager.email, login_scheme)
+        self.login(self.user_manager, login_scheme)
 
     def login_group_user_manager(self, login_scheme="JWT"):
         """
             Logins an active user to our client
         """
-        self.login(self.grouped_user_manager.email, login_scheme)
+        self.login(self.grouped_user_manager, login_scheme)
 
     def setUp(self, *args, **kwargs):
         """
             Creating user that is concern on user managing
         """
         self.user_manager = UserFactory()
-        perm = Permission.objects.get(codename="view_user")
+        view_perm = Permission.objects.get(codename="view_user")
+        update_user_perm = Permission.objects.get(codename="change_user")
         group_view_perm = Permission.objects.get(codename="view_group")
-        self.user_manager.user_permissions.add(perm)
+        self.user_manager.user_permissions.add(view_perm)
+        self.user_manager.user_permissions.add(update_user_perm)
         self.user_manager.user_permissions.add(group_view_perm)
         self.user_manager.save()
 
@@ -51,7 +56,8 @@ class UserTestCases(BaseWebTestCases):
 
         group_b = GroupFactory()
         group_b.user_set.add(self.grouped_user_manager)
-        group_b.permissions.add(perm)
+        group_b.permissions.add(view_perm)
         group_b.permissions.add(group_view_perm)
+        group_b.permissions.add(update_user_perm)
 
         super().setUp(args, kwargs)

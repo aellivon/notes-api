@@ -8,10 +8,11 @@ from .models import Group
 from .filters import UserGroupFilter, StringUserStatusFilter, AdminStatusFilter
 
 
-class UserViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
+class UserViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateModelMixin):
     queryset = get_user_model().objects.all().order_by("-pk")
     serializer_class = UserSerializer
     permission_classes = [DjangoCoreModelPermissions]
+    http_method_names = ['get', 'post', 'patch']
     filter_backends = [filters.SearchFilter, UserGroupFilter, StringUserStatusFilter, AdminStatusFilter]
     search_fields = [
         'first_name', 'last_name', 'email', 'furigana_fname', 'furigana_lname',

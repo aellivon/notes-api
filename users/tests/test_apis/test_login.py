@@ -1,5 +1,4 @@
 from django.urls import reverse
-from faker import Faker
 from rest_framework import status
 
 from .base_app_test import UserTestCases
@@ -9,8 +8,6 @@ class SignInTestCases(UserTestCases):
     """
     Authorization test cases for profile test case
     """
-
-    fake = Faker()
 
     base_name = "rest_login"
     login_valid_data = {}
