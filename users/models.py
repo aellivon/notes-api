@@ -72,25 +72,15 @@ class User(CommonInfo, AbstractBaseUser, PermissionsMixin):
         return self.email.split("@")[0]
 
 
-class Division(CommonInfo):
+class GroupProfile(CommonInfo):
     """User Divisions, similar to group but is more concerned on actual groups rather than authorizations"""
 
-    name = models.CharField(max_length=100)
+    group = models.OneToOneField(Group, on_delete=models.CASCADE)
     description = models.TextField(null=True, blank=True)
-    is_active = models.BooleanField(default=True)
-    members = models.ManyToManyField(User, related_name="division_set", through="DivisionMember")
 
     def __str__(self):
         return f"{self.name}"
 
     class Meta(CommonInfo.Meta):
-        verbose_name = "Division"
-        verbose_name_plural = "Divisions"
-
-
-class DivisionMember(CommonInfo):
-    division = models.ForeignKey(Division, related_name="members_of_division", on_delete=models.CASCADE)
-    user = models.ForeignKey(User, related_name="division_member", on_delete=models.CASCADE)
-
-
-Group.add_to_class('code_reference', models.CharField(max_length=180, null=True, blank=True, unique=True))
+        verbose_name = "Group Profile"
+        verbose_name_plural = "Group Profiles"

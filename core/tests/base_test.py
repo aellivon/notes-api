@@ -40,12 +40,14 @@ class BaseWebTestCases(APITestCase):
         self.other_user = UserFactory()
 
     def login(self, email, login_scheme="", password=None):
+
         if not password:
             password = self.default_password
 
         if login_scheme == "JWT":
-            self.client.post(reverse('rest_login'), {"email": email, "password": password})
-            self.client.credentials(Authorization=f"JWT {self.access_token}")
+            res = self.client.post(reverse('users:rest_login'), {"email": email, "password": password})
+            self.access_token = res.data.get("access_token", "")
+            self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.access_token}")
         else:
             # Use default session
             self.client.login(email=email, password=self.default_password)

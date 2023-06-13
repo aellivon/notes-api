@@ -5,6 +5,8 @@ from django.contrib.auth import get_user_model
 
 
 class ModelBackend(ModelBackend):
+    # A model backend to have permission like rest_list
+    # Currently unused
 
     def _get_user_rest_permissions(self, user_obj):
         return user_obj.user_permissions.filter(codename__startswith="rest")

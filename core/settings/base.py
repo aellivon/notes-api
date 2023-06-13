@@ -58,7 +58,7 @@ THIRD_PARTY_APPS = [
 ]
 
 
-INSTALLED_APPS = LOCAL_APPS + DJANGO_APPS + THIRD_PARTY_APPS
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -128,7 +128,7 @@ SIMPLE_JWT = {
 }
 
 AUTHENTICATION_BACKENDS = [
-    'core.backends.ModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 JWT_AUTH_COOKIE = "core-auth"

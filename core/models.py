@@ -30,6 +30,3 @@ class CommonInfo(models.Model):
 
     class Meta:
         abstract = True
-        permissions = [
-            ('rest_list', 'Can list on rest api'),
-        ]

@@ -11,7 +11,7 @@ class UserDivisionFilter(filters.BaseFilterBackend):
         division = request.query_params.get("division", "*")
         if division == "*" or not division:
             return queryset
-        return queryset.filter(division_set__pk=division)
+        return queryset.filter(groups_set__pk=division)
 
 
 class StringUserStatusFilter(filters.BaseFilterBackend):
@@ -21,16 +21,14 @@ class StringUserStatusFilter(filters.BaseFilterBackend):
 
     def filter_queryset(self, request, queryset, view):
 
-        status = request.query_params.get("status", True)
+        status = request.query_params.get("status", "all")
 
         if status.lower() == "all" or status == "*":
-            print("aall")
             return queryset
 
         if status.lower() == "archived":
             status = False
         else:
-            print("Truee")
             status = True
 
         return queryset.filter(is_active=status)
@@ -43,7 +41,7 @@ class AdminStatusFilter(filters.BaseFilterBackend):
 
     def filter_queryset(self, request, queryset, view):
 
-        user_type = request.query_params.get("type", True)
+        user_type = request.query_params.get("type", "all")
 
         if user_type.lower() == "all" or user_type == "*":
             return queryset

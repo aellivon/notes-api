@@ -1,18 +1,17 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from rest_framework import mixins, viewsets, filters
 
-from core.permissions.base import RestBasePermission
+from core.permissions.base import DjangoCoreModelPermissions
 
-from .serializers import UserSerializer, DivisionSerializer, GroupSerializer
-from .models import Division
+from .serializers import UserSerializer, GroupSerializer
+from .models import Group
 from .filters import UserDivisionFilter, StringUserStatusFilter, AdminStatusFilter
 
 
 class UserViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateModelMixin):
-    queryset = get_user_model().objects.all()
+    queryset = get_user_model().objects.all().order_by("-pk")
     serializer_class = UserSerializer
-    permission_classes = [RestBasePermission]
+    permission_classes = [DjangoCoreModelPermissions]
     filter_backends = [filters.SearchFilter, UserDivisionFilter, StringUserStatusFilter, AdminStatusFilter]
     search_fields = [
         'first_name', 'last_name', 'email', 'furigana_fname', 'furigana_lname',
@@ -20,19 +19,10 @@ class UserViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateM
     ]
 
 
-class DivisionViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
-    queryset = Division.objects.all().order_by('pk')
-    serializer_class = DivisionSerializer
-    permission_classes = [RestBasePermission]
-    filter_backends = [filters.SearchFilter]
-    search_fields = [
-        'name', "id"
-    ]
-
-
 class GroupViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
-    queryset = Group.objects.all()
+    queryset = Group.objects.all().order_by('-pk')
     serializer_class = GroupSerializer
+    permission_classes = []
     filter_backends = [filters.SearchFilter]
     search_fields = [
         'name', "id"
