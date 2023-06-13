@@ -1,6 +1,7 @@
 from core.tests.base_test import BaseWebTestCases
 from django.contrib.auth.models import Permission
 from users.tests.factories.user import UserFactory
+from users.tests.factories.group import GroupFactory
 
 
 class UserTestCases(BaseWebTestCases):
@@ -10,6 +11,9 @@ class UserTestCases(BaseWebTestCases):
 
     user_manager = None
     app_name = "users"
+
+    group_a = None
+    unique_string = "YD122E"
 
     def login_user_manager(self, login_scheme="JWT"):
         """
@@ -25,4 +29,15 @@ class UserTestCases(BaseWebTestCases):
         perm = Permission.objects.get(codename="view_user")
         self.user_manager.user_permissions.add(perm)
         self.user_manager.save()
+
+        UserFactory(first_name=self.unique_string)
+        UserFactory(last_name=self.unique_string)
+        UserFactory(email=f"{self.unique_string}@aellivon.com")
+        UserFactory(furigana_fname=self.unique_string)
+        UserFactory(furigana_lname=self.unique_string)
+        user_group_a = UserFactory(position=self.unique_string)
+
+        self.group_a = GroupFactory()
+        self.group_a.user_set.add(user_group_a)
+
         super().setUp(args, kwargs)

@@ -5,14 +5,14 @@ from core.permissions.base import DjangoCoreModelPermissions
 
 from .serializers import UserSerializer, GroupSerializer
 from .models import Group
-from .filters import UserDivisionFilter, StringUserStatusFilter, AdminStatusFilter
+from .filters import UserGroupFilter, StringUserStatusFilter, AdminStatusFilter
 
 
 class UserViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateModelMixin):
     queryset = get_user_model().objects.all().order_by("-pk")
     serializer_class = UserSerializer
     permission_classes = [DjangoCoreModelPermissions]
-    filter_backends = [filters.SearchFilter, UserDivisionFilter, StringUserStatusFilter, AdminStatusFilter]
+    filter_backends = [filters.SearchFilter, UserGroupFilter, StringUserStatusFilter, AdminStatusFilter]
     search_fields = [
         'first_name', 'last_name', 'email', 'furigana_fname', 'furigana_lname',
         'position', "id"

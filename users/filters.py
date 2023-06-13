@@ -1,26 +1,32 @@
 from rest_framework import filters
 
 
-class UserDivisionFilter(filters.BaseFilterBackend):
+class UserGroupFilter(filters.BaseFilterBackend):
     """
     Filter that checks if it belongs to a specific division
     """
 
     def filter_queryset(self, request, queryset, view):
 
-        division = request.query_params.get("division", "*")
-        if division == "*" or not division:
+        group = request.query_params.get("group", "*")
+        if group == "*" or not group:
             return queryset
-        return queryset.filter(groups_set__pk=division)
+
+        try:
+            group = int(group)
+        except ValueError as e:
+            print(e)
+            return queryset
+
+        return queryset.filter(groups__pk=group)
 
 
 class StringUserStatusFilter(filters.BaseFilterBackend):
     """
-    Filter that checks if it belongs to a specific division
+    Filter that checks user status
     """
 
     def filter_queryset(self, request, queryset, view):
-
         status = request.query_params.get("status", "all")
 
         if status.lower() == "all" or status == "*":
@@ -36,7 +42,7 @@ class StringUserStatusFilter(filters.BaseFilterBackend):
 
 class AdminStatusFilter(filters.BaseFilterBackend):
     """
-    Filter that checks if it belongs to a specific division
+    Filter that checks for superuser or not
     """
 
     def filter_queryset(self, request, queryset, view):

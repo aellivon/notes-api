@@ -31,27 +31,43 @@ class UserListTestCases(UserTestCases):
         response = self.client.get(reverse(self.get_list_url()))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_get_user_list_with_permission_and_with_all_filter_succeeds(self):
-        self.login_user_manager()
-        response = self.client.get(reverse(self.get_list_url()))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    # def test_get_user_list_with_permission_and_with_all_filter_succeeds(self):
+    #     self.login_user_manager()
+    #     response = self.client.get(reverse(self.get_list_url()))
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_user_list_with_permission_and_search_filter_succeeds(self):
         self.login_user_manager()
-        response = self.client.get(reverse(self.get_list_url()))
+        response = self.client.get(
+            reverse(self.get_list_url()),
+            data={"search": self.unique_string}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get("count", 0), 6)
 
-    def test_get_user_with_permission_and_user_division_filter_succeeds(self):
+    def test_get_user_with_permission_and_user_group_filter_succeeds(self):
         self.login_user_manager()
-        response = self.client.get(reverse(self.get_list_url()))
+        response = self.client.get(
+            reverse(self.get_list_url()),
+            data={"group": self.group_a.pk}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get("count", 0), 1)
 
     def test_get_user_with_permission_and_user_status_filter_succeeds(self):
         self.login_user_manager()
-        response = self.client.get(reverse(self.get_list_url()))
+        response = self.client.get(
+            reverse(self.get_list_url()),
+            data={"status": "archived"}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get("count", 0), 1)
 
     def test_get_user_with_permission_and_admin_status_filter_succeeds(self):
         self.login_user_manager()
-        response = self.client.get(reverse(self.get_list_url()))
+        response = self.client.get(
+            reverse(self.get_list_url()),
+            data={"type": "admin"}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get("count", 0), 1)

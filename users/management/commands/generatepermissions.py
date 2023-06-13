@@ -26,7 +26,7 @@ class Command(BaseCommand):
                 for perm in permission_list:
                     to_add_perms = permission_bundle.get(perm, [perm])
                     group, _ = Group.objects.get_or_create(
-                        code_reference=user_type_key
+                        name=user_type_key
                     )
                     group.name = user_type_key
                     for to_add_perm in to_add_perms:
