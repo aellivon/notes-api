@@ -17,8 +17,8 @@ class DjangoCoreModelPermissions(permissions.DjangoModelPermissions):
 
     perms_map = {
         'GET': view_permissions,
-        # 'OPTIONS': view_permissions,
-        # 'HEAD': view_permissions,
+        'OPTIONS': [],
+        'HEAD': [],
         'POST': permissions.DjangoModelPermissions.perms_map['POST'],
         'PUT': permissions.DjangoModelPermissions.perms_map['PUT'],
         'PATCH': permissions.DjangoModelPermissions.perms_map['PATCH'],
@@ -29,22 +29,30 @@ class DjangoCoreModelPermissions(permissions.DjangoModelPermissions):
 
         if request.user.is_superuser:
             return True
-        if request.method == "PATCH" and not from_object_permission:
-            # We need to check if the object is the logged in user or not
-            delay_decision = True
 
-        if from_object_permission:
-            delay_decision = False
+        return super().has_permission(request, view)
 
-        if not delay_decision:
-            return super().has_permission(request, view)
-        else:
-            return True
+
+class IsOwnerPermission(permissions.BasePermission):
+
+    def _queryset(self, view):
+        assert hasattr(view, 'get_queryset') \
+            or getattr(view, 'queryset', None) is not None, (
+            'Cannot apply {} on a view that does not set '
+            '`.queryset` or have a `.get_queryset()` method.'
+        ).format(self.__class__.__name__)
+
+        if hasattr(view, 'get_queryset'):
+            queryset = view.get_queryset()
+            assert queryset is not None, (
+                '{}.get_queryset() returned None'.format(view.__class__.__name__)
+            )
+            return queryset
+        return view.queryset
 
     def has_object_permission(self, request, view, obj):
         queryset = self._queryset(view)
         if queryset.model._meta.model_name == "user":
             if request.user.pk == obj.pk:
                 return True
-
-        return self.has_permission(request, view, delay_decision=False, from_object_permission=True)
+        return False

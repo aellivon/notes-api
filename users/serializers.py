@@ -49,8 +49,7 @@ class UserSerializer(serializers.ModelSerializer):
             'position', 'avatar_url', 'date_joined', 'display_name'
         )
         read_only_fields = (
-            'id', 'first_name', 'last_name', 'email', 'furigana_lname', 'furigana_fname',
-            'position', 'avatar_url', 'date_joined', 'display_name'
+            'id', 'avatar_url', 'date_joined', 'display_name'
         )
 
 

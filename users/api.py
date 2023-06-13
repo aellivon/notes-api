@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import mixins, viewsets, filters
 
-from core.permissions.base import DjangoCoreModelPermissions
+from core.permissions.base import DjangoCoreModelPermissions, IsOwnerPermission
 
 from .serializers import UserSerializer, GroupSerializer
 from .models import Group
@@ -18,6 +18,11 @@ class UserViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateM
         'first_name', 'last_name', 'email', 'furigana_fname', 'furigana_lname',
         'position', "id"
     ]
+
+    def get_permissions(self):
+        if self.action == "partial_update" or self.action == "update":
+            return [permission() for permission in [DjangoCoreModelPermissions | IsOwnerPermission]]
+        return super().get_permissions()
 
 
 class GroupViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):

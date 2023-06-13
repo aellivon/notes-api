@@ -117,6 +117,12 @@ class UserUpdateTestCases(UserTestCases):
             data=self.data_update
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json().get('first_name'), self.data_update.get('first_name'))
+        self.assertEqual(response.json().get('last_name'), self.data_update.get('last_name'))
+        self.assertEqual(response.json().get('email'), self.data_update.get('email'))
+        self.assertEqual(response.json().get('furigana_fname'), self.data_update.get('furigana_fname'))
+        self.assertEqual(response.json().get('furigana_lname'), self.data_update.get('furigana_lname'))
+        self.assertEqual(response.json().get('position'), self.data_update.get('position'))
 
     def test_put_even_with_superuser_fails(self):
         self.login_super_user("JWT")
@@ -133,6 +139,12 @@ class UserUpdateTestCases(UserTestCases):
             data=self.data_update
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json().get('first_name'), self.data_update.get('first_name'))
+        self.assertEqual(response.json().get('last_name'), self.data_update.get('last_name'))
+        self.assertEqual(response.json().get('email'), self.data_update.get('email'))
+        self.assertEqual(response.json().get('furigana_fname'), self.data_update.get('furigana_fname'))
+        self.assertEqual(response.json().get('furigana_lname'), self.data_update.get('furigana_lname'))
+        self.assertEqual(response.json().get('position'), self.data_update.get('position'))
 
     def test_update_listing_with_group_can_update_user_permission_succeeds(self):
         self.login_group_user_manager()
@@ -141,6 +153,12 @@ class UserUpdateTestCases(UserTestCases):
             data=self.data_update
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json().get('first_name'), self.data_update.get('first_name'))
+        self.assertEqual(response.json().get('last_name'), self.data_update.get('last_name'))
+        self.assertEqual(response.json().get('email'), self.data_update.get('email'))
+        self.assertEqual(response.json().get('furigana_fname'), self.data_update.get('furigana_fname'))
+        self.assertEqual(response.json().get('furigana_lname'), self.data_update.get('furigana_lname'))
+        self.assertEqual(response.json().get('position'), self.data_update.get('position'))
 
     def test_update_listing_with_admin_succeeds(self):
         self.login_super_user("JWT")
@@ -149,3 +167,9 @@ class UserUpdateTestCases(UserTestCases):
             data=self.data_update
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json().get('first_name'), self.data_update.get('first_name'))
+        self.assertEqual(response.json().get('last_name'), self.data_update.get('last_name'))
+        self.assertEqual(response.json().get('email'), self.data_update.get('email'))
+        self.assertEqual(response.json().get('furigana_fname'), self.data_update.get('furigana_fname'))
+        self.assertEqual(response.json().get('furigana_lname'), self.data_update.get('furigana_lname'))
+        self.assertEqual(response.json().get('position'), self.data_update.get('position'))
