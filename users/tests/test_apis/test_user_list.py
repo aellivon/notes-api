@@ -31,10 +31,10 @@ class UserListTestCases(UserTestCases):
         response = self.client.get(reverse(self.get_list_url()))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    # def test_get_user_list_with_permission_and_with_all_filter_succeeds(self):
-    #     self.login_user_manager()
-    #     response = self.client.get(reverse(self.get_list_url()))
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    def test_get_user_list_with_group_permission_succeeds(self):
+        self.login_group_user_manager()
+        response = self.client.get(reverse(self.get_list_url()))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_user_list_with_permission_and_search_filter_succeeds(self):
         self.login_user_manager()

@@ -8,7 +8,7 @@ from .models import Group
 from .filters import UserGroupFilter, StringUserStatusFilter, AdminStatusFilter
 
 
-class UserViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateModelMixin):
+class UserViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     queryset = get_user_model().objects.all().order_by("-pk")
     serializer_class = UserSerializer
     permission_classes = [DjangoCoreModelPermissions]
@@ -22,8 +22,8 @@ class UserViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateM
 class GroupViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     queryset = Group.objects.all().order_by('-pk')
     serializer_class = GroupSerializer
-    permission_classes = []
-    filter_backends = [filters.SearchFilter]
+    permission_classes = [DjangoCoreModelPermissions]
+    filter_backends = []
     search_fields = [
         'name', "id"
     ]
