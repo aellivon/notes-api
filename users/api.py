@@ -30,7 +30,7 @@ class DivisionViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     ]
 
 
-class TypeViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
+class GroupViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     filter_backends = [filters.SearchFilter]

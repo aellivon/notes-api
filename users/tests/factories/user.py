@@ -23,7 +23,8 @@ class UserFactory(factory.django.DjangoModelFactory):
         lambda n: f'{fake.last_name()}{n}'
     )
     email = factory.LazyAttribute(
-        lambda o: f'{convert_to_ascii(o.first_name)}_{convert_to_ascii(o.last_name)}@{fake.free_email_domain()}'.lower()
+        lambda o: (f'{convert_to_ascii(o.first_name)}_{convert_to_ascii(o.last_name)}'
+                   f'@{fake.free_email_domain()}'.lower())
     )
 
     furigana_fname = factory.LazyAttribute(
