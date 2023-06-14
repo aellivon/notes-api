@@ -5,9 +5,6 @@ from drf_extra_fields.fields import Base64ImageField
 
 from rest_framework import serializers
 
-from .models import Group
-
-
 UserModel = get_user_model()
 
 
@@ -61,6 +58,7 @@ class OwnerUserSerializer(serializers.ModelSerializer):
         This serializer is for serializing User Models
     """
     avatar_url = Base64ImageField(max_length=None, use_url=True)
+
     class Meta:
         model = get_user_model()
         fields = (

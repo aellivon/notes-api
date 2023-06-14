@@ -1,5 +1,6 @@
 import datetime
 import hashlib
+import uuid
 
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
 from django.db import models
@@ -16,10 +17,8 @@ def profile_directory_path(instance, filename):
     :return: a new path for the upload directory
     """
 
-    new_filename = hashlib.md5(
-        datetime.datetime.now().isoformat().encode("utf-8")
-    ).hexdigest()
-    return "profile_pictures/{0}.{1}".format(new_filename, filename.split(".")[-1])
+    file_name = str(uuid.uuid4())[:12]  # 12 characters are more than enough.
+    return "profile_pictures/{0}.{1}".format(file_name, filename.split(".")[-1])
 
 
 class User(CommonInfo, AbstractBaseUser, PermissionsMixin):

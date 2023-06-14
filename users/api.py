@@ -9,7 +9,10 @@ from .models import Group
 from .filters import UserGroupFilter, StringUserStatusFilter, AdminStatusFilter
 
 
-class UserViewSet(CoreAttributeViewSet, viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateModelMixin):
+class UserViewSet(
+    CoreAttributeViewSet, viewsets.GenericViewSet, mixins.CreateModelMixin,
+    mixins.ListModelMixin, mixins.UpdateModelMixin
+):
     queryset = get_user_model().objects.all().order_by("-pk")
     serializer_class = UserSerializer
     permission_classes = [DjangoCoreModelPermissions]
