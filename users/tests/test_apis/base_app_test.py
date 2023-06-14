@@ -40,10 +40,13 @@ class UserTestCases(BaseWebTestCases):
         update_user_perm = Permission.objects.get(codename="change_user")
         group_view_perm = Permission.objects.get(codename="view_group")
         create_user_perm = Permission.objects.get(codename="add_user")
+        delete_user_perm = Permission.objects.get(codename="delete_user")
+
         self.user_manager.user_permissions.add(view_perm)
         self.user_manager.user_permissions.add(update_user_perm)
         self.user_manager.user_permissions.add(create_user_perm)
         self.user_manager.user_permissions.add(group_view_perm)
+        self.user_manager.user_permissions.add(delete_user_perm)
         self.user_manager.save()
 
         UserFactory(first_name=self.unique_string)
@@ -62,5 +65,6 @@ class UserTestCases(BaseWebTestCases):
         group_b.permissions.add(group_view_perm)
         group_b.permissions.add(update_user_perm)
         group_b.permissions.add(create_user_perm)
+        group_b.permissions.add(delete_user_perm)
 
         super().setUp(args, kwargs)

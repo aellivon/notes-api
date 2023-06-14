@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import mixins, viewsets, filters
 
 from core.permissions.base import DjangoCoreModelPermissions, IsOwnerPermission
+from core.viewsets.mixins import AppModelViewSet
 from core.viewsets.base import CoreAttributeViewSet
 
 from .serializers import UserSerializer, GroupSerializer, OwnerUserSerializer
@@ -10,13 +11,12 @@ from .filters import UserGroupFilter, StringUserStatusFilter, AdminStatusFilter
 
 
 class UserViewSet(
-    CoreAttributeViewSet, viewsets.GenericViewSet, mixins.CreateModelMixin,
-    mixins.ListModelMixin, mixins.UpdateModelMixin
+    CoreAttributeViewSet, AppModelViewSet
 ):
     queryset = get_user_model().objects.all().order_by("-pk")
     serializer_class = UserSerializer
     permission_classes = [DjangoCoreModelPermissions]
-    http_method_names = ['get', 'post', 'patch']
+    http_method_names = ['get', 'post', 'patch', 'delete']
     filter_backends = [filters.SearchFilter, UserGroupFilter, StringUserStatusFilter, AdminStatusFilter]
     search_fields = [
         'first_name', 'last_name', 'email', 'furigana_fname', 'furigana_lname',

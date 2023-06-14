@@ -5,6 +5,7 @@ from datetime import datetime
 
 from rest_framework import status
 from core.shortcuts import convert_to_furigana, convert_to_ascii
+from users.tests.factories.user import UserFactory
 
 from .base_app_test import UserTestCases
 
@@ -96,7 +97,9 @@ class UserUpdateTestCases(UserTestCases):
             'furigana_lname': convert_to_furigana(self.fake.first_name()),
             'position': self.fake.company(),
             'date_joined': self.fake.iso8601(tzinfo=pytz.timezone('Asia/Tokyo')),
-            'avatar_url': "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
+            'avatar_url': ("data:image/png;base64, "
+                           "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4"
+                           "//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==")
         }
         super().__init__(*args, **kwargs)
 
@@ -114,6 +117,14 @@ class UserUpdateTestCases(UserTestCases):
             data=self.data_update
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_update_user_with_no_match_id_fails(self):
+        self.login_other_user()
+        response = self.client.patch(
+            reverse(self.get_detail_url(), kwargs={"pk": 999999}),
+            data=self.data_update
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_user_with_owner_succeeds(self):
         self.login_active_user("JWT")
@@ -219,7 +230,9 @@ class UserCreateTestCases(UserTestCases):
             'furigana_lname': convert_to_furigana(self.fake.first_name()),
             'position': self.fake.company(),
             'date_joined': self.fake.iso8601(tzinfo=pytz.timezone('Asia/Tokyo')),
-            'avatar_url': "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
+            'avatar_url': ("data:image/png;base64, "
+                           "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4"
+                           "//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==")
         }
         super().__init__(*args, **kwargs)
 
@@ -231,7 +244,7 @@ class UserCreateTestCases(UserTestCases):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_create_user_non_admin_fails(self):
-        self.login_other_user()
+        self.login_active_user()
         response = self.client.post(
             reverse(self.get_list_url()),
             data=self.data_create
@@ -294,3 +307,84 @@ class UserCreateTestCases(UserTestCases):
             datetime.fromisoformat(self.data_create.get('date_joined')).astimezone(pytz.timezone('Asia/Tokyo'))
         )
         self.assertIn(".png", response.json().get("avatar_url"))
+
+
+class UserRetrieveTestCases(UserTestCases):
+
+    base_name = "user"
+
+    def test_get_user_detail_has_permission_succeeds(self):
+        self.login_user_manager()
+        response = self.client.get(reverse(self.get_detail_url(), kwargs={"pk": self.active_user.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_user_detail_without_permission_fails(self):
+        self.login_active_user()
+        response = self.client.get(reverse(self.get_detail_url(), kwargs={"pk": self.active_user.id}))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_get_user_detail_unauthorized_fails(self):
+        response = self.client.get(reverse(self.get_detail_url(), kwargs={"pk": self.active_user.id}))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_get_user_detail_is_superuser_succeeds(self):
+        self.login_super_user("JWT")
+        response = self.client.get(reverse(self.get_detail_url(), kwargs={"pk": self.active_user.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_user_detail_with_group_permission_succeeds(self):
+        self.login_group_user_manager()
+        response = self.client.get(reverse(self.get_detail_url(), kwargs={"pk": self.active_user.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_user_detail_with_no_corresponding_id_fails(self):
+        self.login_group_user_manager()
+        response = self.client.get(reverse(self.get_detail_url(), kwargs={"pk": 999999}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class UserArchiveViewSet(UserTestCases):
+
+    base_name = "user"
+
+    def test_archive_user_has_permission_succeeds(self):
+        self.login_user_manager()
+        to_delete_user = UserFactory()
+        response = self.client.delete(reverse(self.get_detail_url(), kwargs={"pk": to_delete_user.id}))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_archive_user_without_permission_fails(self):
+        self.login_active_user()
+        to_delete_user = UserFactory()
+        response = self.client.delete(reverse(self.get_detail_url(), kwargs={"pk": to_delete_user.id}))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_archive_user_unauthorized_fails(self):
+        to_delete_user = UserFactory()
+        response = self.client.delete(reverse(self.get_detail_url(), kwargs={"pk": to_delete_user.id}))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_archive_user_is_superuser_succeeds(self):
+        self.login_super_user("JWT")
+        to_delete_user = UserFactory()
+        response = self.client.delete(reverse(self.get_detail_url(), kwargs={"pk": to_delete_user.id}))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_archive_user_with_group_permission_succeeds(self):
+        self.login_group_user_manager()
+        to_delete_user = UserFactory()
+        response = self.client.delete(reverse(self.get_detail_url(), kwargs={"pk": to_delete_user.id}))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_archive_user_detail_with_no_corresponding_id_fails(self):
+        self.login_group_user_manager()
+        response = self.client.delete(reverse(self.get_detail_url(), kwargs={"pk": 999999}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_archive_user_with_owner_fails(self):
+        # Prevents the user from shooting themselves on the foot
+        self.login_active_user()
+        response = self.client.delete(
+            reverse(self.get_detail_url(), kwargs={"pk": self.active_user.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

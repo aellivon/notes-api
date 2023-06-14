@@ -31,6 +31,14 @@ class SignInTestCases(UserTestCases):
         response = self.client.post(reverse(self.get_root_url()), self.login_valid_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_post_login_but_inactive_user_fails(self, *args, **kwargs):
+
+        response = self.client.post(reverse(self.get_root_url()), {
+            "email": self.inactive_user.email,
+            "password": self.default_password
+        })
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_post_login_with_wrong_password_fails(self, *args, **kwargs):
 
         # Login with wrong password
