@@ -1,6 +1,9 @@
 {
     "users.management": [
-        "user.rest_list",
-        "division.rest_list"
+        "user.add_user",
+        "user.view_user",
+        "user.change_user",
+        "user.delete_user",
+        "group.view_group"
     ]
 }
