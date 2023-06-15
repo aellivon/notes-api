@@ -2,13 +2,14 @@ from django.contrib.auth import get_user_model
 from rest_framework import mixins, viewsets, filters
 
 from core.permissions.base import DjangoCoreModelPermissions, IsOwnerPermission
+from core.viewsets.base import CoreAttributeViewSet
 
-from .serializers import UserSerializer, GroupSerializer
+from .serializers import UserSerializer, GroupSerializer, OwnerUserSerializer
 from .models import Group
 from .filters import UserGroupFilter, StringUserStatusFilter, AdminStatusFilter
 
 
-class UserViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateModelMixin):
+class UserViewSet(CoreAttributeViewSet, viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateModelMixin):
     queryset = get_user_model().objects.all().order_by("-pk")
     serializer_class = UserSerializer
     permission_classes = [DjangoCoreModelPermissions]
@@ -18,6 +19,16 @@ class UserViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateM
         'first_name', 'last_name', 'email', 'furigana_fname', 'furigana_lname',
         'position', "id"
     ]
+
+    def owner_and_no_permissions(self, *args, **kwargs):
+        if not self.logged_in_user_has_privelege and self.logged_in_user_is_owner:
+            return True
+        return False
+
+    def get_serializer(self, *args, **kwargs):
+        if self.owner_and_no_permissions():
+            self.serializer_class = OwnerUserSerializer
+        return super().get_serializer(*args, **kwargs)
 
     def get_permissions(self):
         if self.action == "partial_update" or self.action == "update":

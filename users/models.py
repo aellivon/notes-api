@@ -38,7 +38,7 @@ class User(CommonInfo, AbstractBaseUser, PermissionsMixin):
 
     avatar_url = models.ImageField(upload_to=profile_directory_path, null=True, blank=True)
 
-    date_joined = models.DateTimeField(auto_now_add=True)
+    date_joined = models.DateTimeField(null=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ("first_name", "last_name")
@@ -51,6 +51,9 @@ class User(CommonInfo, AbstractBaseUser, PermissionsMixin):
     def save(self, *args, **kwargs):
         if not self.id:
             self.handle = self.trimmed_email
+
+        if not self.date_joined:
+            self.date_joined = self.created_at
 
         return super(User, self).save(*args, **kwargs)
 

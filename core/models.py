@@ -18,8 +18,8 @@ class CommonInfo(models.Model):
     """
 
     is_active = models.BooleanField(default=True)
-    date_updated = models.DateTimeField(auto_now=True)
-    created = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     # This allows us to escape to default django query set if
     #   later in the project I need it

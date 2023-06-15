@@ -28,9 +28,12 @@ class DjangoCoreModelPermissions(permissions.DjangoModelPermissions):
     def has_permission(self, request, view, delay_decision=False, from_object_permission=False):
 
         if request.user.is_superuser:
+            view.logged_in_user_has_privelege = True
             return True
 
-        return super().has_permission(request, view)
+        right = super().has_permission(request, view)
+        view.logged_in_user_has_privelege = right
+        return right
 
 
 class IsOwnerPermission(permissions.BasePermission):
@@ -54,5 +57,7 @@ class IsOwnerPermission(permissions.BasePermission):
         queryset = self._queryset(view)
         if queryset.model._meta.model_name == "user":
             if request.user.pk == obj.pk:
+                view.logged_in_user_is_owner = True
                 return True
+        view.logged_in_user_is_owner = False
         return False

@@ -1,6 +1,7 @@
 from dj_rest_auth.serializers import UserDetailsSerializer
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from drf_extra_fields.fields import Base64ImageField
 
 from rest_framework import serializers
 
@@ -42,6 +43,8 @@ class UserSerializer(serializers.ModelSerializer):
     """
         This serializer is for serializing User Models
     """
+    avatar_url = Base64ImageField(max_length=None, use_url=True)
+
     class Meta:
         model = get_user_model()
         fields = (
@@ -49,7 +52,23 @@ class UserSerializer(serializers.ModelSerializer):
             'position', 'avatar_url', 'date_joined', 'display_name'
         )
         read_only_fields = (
-            'id', 'avatar_url', 'date_joined', 'display_name'
+            'id', 'display_name'
+        )
+
+
+class OwnerUserSerializer(serializers.ModelSerializer):
+    """
+        This serializer is for serializing User Models
+    """
+    avatar_url = Base64ImageField(max_length=None, use_url=True)
+    class Meta:
+        model = get_user_model()
+        fields = (
+            'id', 'first_name', 'last_name', 'email', 'furigana_lname', 'furigana_fname',
+            'position', 'avatar_url', 'date_joined', 'display_name'
+        )
+        read_only_fields = (
+            'id', 'display_name', 'date_joined'
         )
 
 
