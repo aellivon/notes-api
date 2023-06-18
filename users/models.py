@@ -1,5 +1,3 @@
-import datetime
-import hashlib
 import uuid
 
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group

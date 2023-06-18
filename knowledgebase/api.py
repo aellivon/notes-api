@@ -1,4 +1,4 @@
-from rest_framework import mixins, viewsets, filters
+from rest_framework import filters
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
@@ -8,10 +8,8 @@ from django.db.models.query import QuerySet
 
 from core.permissions.base import IsOwnerPermission, IsOwnerOrObjectPublicPermission
 
-# from .serializers import UserSerializer, GroupSerializer, OwnerUserSerializer
 from .models import KnowledgeBase
 from .serializers import KnowledgeBaseSerializer
-# from .filters import UserGroupFilter, StringUserStatusFilter, AdminStatusFilter
 
 
 class KnowledgeBaseViewSet(
@@ -36,7 +34,10 @@ class KnowledgeBaseViewSet(
 
         queryset = self.queryset
         if isinstance(queryset, QuerySet):
-            if self.action == "partial_update" or self.action == "update" or self.action == "retrieve" or self.action == "destroy":
+            if (
+                self.action == "partial_update" or self.action == "update" or
+                self.action == "retrieve" or self.action == "destroy"
+            ):
                 queryset = queryset.all()
             elif self.action == "list":
                 queryset = queryset.filter(owner=self.request.user)

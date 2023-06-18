@@ -295,7 +295,9 @@ class UserCreateTestCases(UserTestCases):
         self.assertEqual(response.json().get('position'), self.data_create_without_avatar.get('position'))
         self.assertEqual(
             datetime.fromisoformat(response.json().get('date_joined')).astimezone(pytz.timezone('Asia/Tokyo')),
-            datetime.fromisoformat(self.data_create_without_avatar.get('date_joined')).astimezone(pytz.timezone('Asia/Tokyo'))
+            datetime.fromisoformat(
+                self.data_create_without_avatar.get('date_joined')).astimezone(pytz.timezone('Asia/Tokyo')
+            ) # noqa E124
         )
         self.assertEqual(None, response.json().get("avatar_url"))
 
@@ -388,7 +390,6 @@ class UserArchiveViewSet(UserTestCases):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get("count", 0), 6)
-
 
     def test_archive_user_without_permission_fails(self):
         self.login_active_user()

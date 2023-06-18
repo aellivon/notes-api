@@ -67,7 +67,6 @@ class KnowledgebaseMyListTestCases(KnowledgeBaseTestCases):
         response = self.client.get(reverse(self.get_list_url()))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-
     def test_get_kb_list_with_authoization_can_get_public_notes(self):
         self.login_active_user(login_scheme="JWT")
         KnowledgeBaseFactory(owner=self.active_user, is_public=True)
@@ -101,7 +100,6 @@ class KnowledgebaseListAllTestCases(KnowledgeBaseTestCases):
         response = self.client.get(reverse(self.get_action_url(self.action)))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-
     def test_get_kb_list_with_authoization_can_get_public_notes(self):
         self.login_active_user(login_scheme="JWT")
         response = self.client.get(reverse(self.get_action_url(self.action)))
@@ -126,7 +124,6 @@ class KnowledgebaseRetrieveTestCases(KnowledgeBaseTestCases):
         response = self.client.get(reverse(self.get_list_url()))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-
     def test_get_kb_retrieve_with_authoization_can_get_public_notes_success(self):
         self.login_active_user(login_scheme="JWT")
         knowledge_base_factory = KnowledgeBaseFactory(owner=self.other_user, is_public=True)
@@ -136,7 +133,7 @@ class KnowledgebaseRetrieveTestCases(KnowledgeBaseTestCases):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_kb_retrieve_with_auhtorization_cannot_get_private_notes_of_others_fails(self):
-        self.login_active_user(login_scheme="JWT")  
+        self.login_active_user(login_scheme="JWT")
         knowledge_base_factory = KnowledgeBaseFactory(owner=self.other_user, is_public=False)
         response = self.client.get(
             reverse(self.get_detail_url(), kwargs={"pk": knowledge_base_factory.id})
@@ -161,7 +158,7 @@ class KnowledgebaseRetrieveTestCases(KnowledgeBaseTestCases):
 
     def test_get_kb_retrieve_with_id_not_found_fails(self):
         self.login_active_user(login_scheme="JWT")
-        knowledge_base_factory = KnowledgeBaseFactory(owner=self.active_user, is_public=True)
+        KnowledgeBaseFactory(owner=self.active_user, is_public=True)
         response = self.client.get(
             reverse(self.get_detail_url(), kwargs={"pk": 99999})
         )

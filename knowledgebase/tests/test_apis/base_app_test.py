@@ -4,6 +4,7 @@ from faker import Faker
 from knowledgebase.tests.factories.knowledgebase import KnowledgeBaseFactory
 from users.tests.factories.user import UserFactory
 
+
 class KnowledgeBaseTestCases(BaseWebTestCases):
 
     model_manager = None
@@ -27,5 +28,5 @@ class KnowledgeBaseTestCases(BaseWebTestCases):
         b.save()
         a.owner = a_owner
         a.save()
-        
+
         super().setUp(args, kwargs)
