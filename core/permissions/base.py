@@ -63,6 +63,33 @@ class IsOwnerUserModelPermission(permissions.BasePermission):
         return False
 
 
+class NotOwnAccountPermission(permissions.BasePermission):
+
+    def _queryset(self, view):
+        assert hasattr(view, 'get_queryset') \
+            or getattr(view, 'queryset', None) is not None, (
+            'Cannot apply {} on a view that does not set '
+            '`.queryset` or have a `.get_queryset()` method.'
+        ).format(self.__class__.__name__)
+
+        if hasattr(view, 'get_queryset'):
+            queryset = view.get_queryset()
+            assert queryset is not None, (
+                '{}.get_queryset() returned None'.format(view.__class__.__name__)
+            )
+            return queryset
+        return view.queryset
+
+    def has_object_permission(self, request, view, obj):
+        queryset = self._queryset(view)
+        if queryset.model._meta.model_name == "user":
+            if request.user.pk == obj.pk:
+                view.logged_in_user_is_owner = True
+                return False
+        view.logged_in_user_is_owner = False
+        return True
+
+
 class IsOwnerPermission(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):

@@ -426,3 +426,11 @@ class UserArchiveViewSet(UserTestCases):
             reverse(self.get_detail_url(), kwargs={"pk": self.active_user.id})
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_archive_own_account_even_with_superuser_fails(self):
+        # Prevents the user from shooting themselves on the foot
+        self.login_super_user()
+        response = self.client.delete(
+            reverse(self.get_detail_url(), kwargs={"pk": self.super_user.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
