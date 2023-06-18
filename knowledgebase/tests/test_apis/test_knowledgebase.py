@@ -58,9 +58,10 @@ class KnowledgeBaseCreateTestCases(KnowledgeBaseTestCases):
         self.assertNotEqual(response.json().get('owner'), self.malicous_data_create.get('owner'))
 
 
-class KnowledgebaseListTestCases(KnowledgeBaseTestCases):
+class KnowledgebaseMyListTestCases(KnowledgeBaseTestCases):
 
     base_name = "knowledgebase"
+    action = "all"
 
     def test_get_kb_list_unauthorized_fails(self):
         response = self.client.get(reverse(self.get_list_url()))
@@ -69,14 +70,48 @@ class KnowledgebaseListTestCases(KnowledgeBaseTestCases):
 
     def test_get_kb_list_with_authoization_can_get_public_notes(self):
         self.login_active_user(login_scheme="JWT")
+        KnowledgeBaseFactory(owner=self.active_user, is_public=True)
+        KnowledgeBaseFactory(owner=self.active_user, is_public=False)
         response = self.client.get(reverse(self.get_list_url()))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get("count", 0), 2)
+
+    def test_get_kb_list_with_search_text_can_filter_properly(self):
+
+        self.login_active_user(login_scheme="JWT")
+
+        KnowledgeBaseFactory(owner=self.active_user, description=self.unique_string)
+        KnowledgeBaseFactory(owner=self.active_user, title=self.unique_string)
+        KnowledgeBaseFactory(owner=self.active_user, description=self.unique_string)
+
+        response = self.client.get(
+            reverse(self.get_list_url()),
+            data={"search": self.unique_string}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get("count", 0), 3)
+
+
+class KnowledgebaseListAllTestCases(KnowledgeBaseTestCases):
+
+    base_name = "knowledgebase"
+    action = "all"
+
+    def test_get_kb_list_unauthorized_fails(self):
+        response = self.client.get(reverse(self.get_action_url(self.action)))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+    def test_get_kb_list_with_authoization_can_get_public_notes(self):
+        self.login_active_user(login_scheme="JWT")
+        response = self.client.get(reverse(self.get_action_url(self.action)))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get("count", 0), 5)
 
     def test_get_kb_list_with_search_text_can_filter_properly(self):
         self.login_active_user(login_scheme="JWT")
         response = self.client.get(
-            reverse(self.get_list_url()),
+            reverse(self.get_action_url(self.action)),
             data={"search": self.unique_string}
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -216,7 +251,15 @@ class KnowledgeBaseArchiveTestCases(KnowledgeBaseTestCases):
 
     def test_archive_owned_kb_suceeds(self):
         self.login_active_user(login_scheme="JWT")
-        knowledge_base_factory = KnowledgeBaseFactory(owner=self.active_user)
+        knowledge_base_factory = KnowledgeBaseFactory(owner=self.active_user, is_public=True)
+        response = self.client.delete(
+            reverse(self.get_detail_url(), kwargs={"pk": knowledge_base_factory.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_archive_owned_private_kb_suceeds(self):
+        self.login_active_user(login_scheme="JWT")
+        knowledge_base_factory = KnowledgeBaseFactory(owner=self.active_user, is_public=False)
         response = self.client.delete(
             reverse(self.get_detail_url(), kwargs={"pk": knowledge_base_factory.id})
         )
@@ -224,7 +267,15 @@ class KnowledgeBaseArchiveTestCases(KnowledgeBaseTestCases):
 
     def test_archive_other_kb_fails(self):
         self.login_active_user(login_scheme="JWT")
-        knowledge_base_factory = KnowledgeBaseFactory(owner=self.other_user)
+        knowledge_base_factory = KnowledgeBaseFactory(owner=self.other_user, is_public=True)
+        response = self.client.delete(
+            reverse(self.get_detail_url(), kwargs={"pk": knowledge_base_factory.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_archive_private_and_other_kb_fails(self):
+        self.login_active_user(login_scheme="JWT")
+        knowledge_base_factory = KnowledgeBaseFactory(owner=self.other_user, is_public=False)
         response = self.client.delete(
             reverse(self.get_detail_url(), kwargs={"pk": knowledge_base_factory.id})
         )

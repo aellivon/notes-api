@@ -104,5 +104,11 @@ class BaseWebTestCases(APITestCase):
         """
         return f"{self._get_app_and_base_name()}-detail"
 
+    def get_action_url(self, action):
+        """
+            Gets the app name with the view name and append it with action
+        """
+        return f"{self._get_app_and_base_name()}-{action}"
+
     def get_root_url(self):
         return f"{self._get_app_and_base_name()}"

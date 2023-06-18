@@ -1,8 +1,8 @@
 from rest_framework import mixins, viewsets, filters
 
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
 from core.viewsets.mixins import AppModelViewSet
-from core.viewsets.base import CoreAttributeViewSet
 
 from django.db.models.query import QuerySet
 
@@ -36,9 +36,11 @@ class KnowledgeBaseViewSet(
 
         queryset = self.queryset
         if isinstance(queryset, QuerySet):
-            if self.action == "partial_update" or self.action == "update" or self.action == "retrieve":
+            if self.action == "partial_update" or self.action == "update" or self.action == "retrieve" or self.action == "destroy":
                 queryset = queryset.all()
             elif self.action == "list":
+                queryset = queryset.filter(owner=self.request.user)
+            elif self.action == "all":
                 queryset = queryset.filter(is_public=True)
             else:
                 queryset = queryset.filter(is_public=True)
@@ -46,7 +48,7 @@ class KnowledgeBaseViewSet(
         return queryset
 
     def get_permissions(self):
-        if self.action == "partial_update" or self.action == "update":
+        if self.action == "partial_update" or self.action == "update" or self.action == "destroy":
             return [permission() for permission in [IsAuthenticated, IsOwnerPermission]]
         elif self.action == "retrieve":
             return [permission() for permission in [IsAuthenticated, IsOwnerOrObjectPublicPermission]]
@@ -54,3 +56,7 @@ class KnowledgeBaseViewSet(
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    @action(detail=False)
+    def all(self, *args, **kwargs):
+        return self.list(args, kwargs)
