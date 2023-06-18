@@ -234,6 +234,16 @@ class UserCreateTestCases(UserTestCases):
                            "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4"
                            "//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==")
         }
+        self.data_create_without_avatar = {
+            'first_name': self.fake.first_name(),
+            'last_name': self.fake.last_name(),
+            'email': (f'{convert_to_ascii(self.fake.first_name())}_{convert_to_ascii(self.fake.last_name())}'
+                      f'@{self.fake.free_email_domain()}'.lower()),
+            'furigana_fname': convert_to_furigana(self.fake.first_name()),
+            'furigana_lname': convert_to_furigana(self.fake.first_name()),
+            'position': self.fake.company(),
+            'date_joined': self.fake.iso8601(tzinfo=pytz.timezone('Asia/Tokyo')),
+        }
         super().__init__(*args, **kwargs)
 
     def test_create_user_with_unauthorized_fails(self):
@@ -269,6 +279,25 @@ class UserCreateTestCases(UserTestCases):
             datetime.fromisoformat(self.data_create.get('date_joined')).astimezone(pytz.timezone('Asia/Tokyo'))
         )
         self.assertIn(".png", response.json().get("avatar_url"))
+
+    def test_create_user_with_can_create_user_but_without_avatar_url_succeeds(self):
+        self.login_user_manager()
+        response = self.client.post(
+            reverse(self.get_list_url()),
+            data=self.data_create_without_avatar
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.json().get('first_name'), self.data_create_without_avatar.get('first_name'))
+        self.assertEqual(response.json().get('last_name'), self.data_create_without_avatar.get('last_name'))
+        self.assertEqual(response.json().get('email'), self.data_create_without_avatar.get('email'))
+        self.assertEqual(response.json().get('furigana_fname'), self.data_create_without_avatar.get('furigana_fname'))
+        self.assertEqual(response.json().get('furigana_lname'), self.data_create_without_avatar.get('furigana_lname'))
+        self.assertEqual(response.json().get('position'), self.data_create_without_avatar.get('position'))
+        self.assertEqual(
+            datetime.fromisoformat(response.json().get('date_joined')).astimezone(pytz.timezone('Asia/Tokyo')),
+            datetime.fromisoformat(self.data_create_without_avatar.get('date_joined')).astimezone(pytz.timezone('Asia/Tokyo'))
+        )
+        self.assertEqual(None, response.json().get("avatar_url"))
 
     def test_create_user_with_group_can_create_user_permission_succeeds(self):
         self.login_group_user_manager()
@@ -352,6 +381,14 @@ class UserArchiveViewSet(UserTestCases):
         to_delete_user = UserFactory()
         response = self.client.delete(reverse(self.get_detail_url(), kwargs={"pk": to_delete_user.id}))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.login_user_manager()
+        response = self.client.get(
+            reverse(self.get_list_url()),
+            data={"search": self.unique_string}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get("count", 0), 6)
+
 
     def test_archive_user_without_permission_fails(self):
         self.login_active_user()

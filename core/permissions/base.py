@@ -36,7 +36,7 @@ class DjangoCoreModelPermissions(permissions.DjangoModelPermissions):
         return right
 
 
-class IsOwnerPermission(permissions.BasePermission):
+class IsOwnerUserModelPermission(permissions.BasePermission):
 
     def _queryset(self, view):
         assert hasattr(view, 'get_queryset') \
@@ -61,3 +61,17 @@ class IsOwnerPermission(permissions.BasePermission):
                 return True
         view.logged_in_user_is_owner = False
         return False
+
+
+class IsOwnerPermission(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+
+        # Instance must have an attribute named `owner`.
+        return obj.owner == request.user
+
+
+class IsOwnerOrObjectPublicPermission(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        return (obj.owner == request.user or obj.is_public)

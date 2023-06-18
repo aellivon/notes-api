@@ -40,7 +40,7 @@ class UserSerializer(serializers.ModelSerializer):
     """
         This serializer is for serializing User Models
     """
-    avatar_url = Base64ImageField(max_length=None, use_url=True)
+    avatar_url = Base64ImageField(max_length=None, use_url=True, required=False)
 
     class Meta:
         model = get_user_model()
@@ -57,7 +57,7 @@ class OwnerUserSerializer(serializers.ModelSerializer):
     """
         This serializer is for serializing User Models
     """
-    avatar_url = Base64ImageField(max_length=None, use_url=True)
+    avatar_url = Base64ImageField(max_length=None, use_url=True, required=False)
 
     class Meta:
         model = get_user_model()

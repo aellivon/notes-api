@@ -36,7 +36,8 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", default='', cast=Csv())
 # Application definition
 
 LOCAL_APPS = [
-    'users.apps.UsersConfig'
+    'users.apps.UsersConfig',
+    'knowledgebase.apps.KnowledgebaseConfig'
 ]
 
 DJANGO_APPS = [

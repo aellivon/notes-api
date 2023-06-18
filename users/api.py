@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import mixins, viewsets, filters
 
-from core.permissions.base import DjangoCoreModelPermissions, IsOwnerPermission
+from core.permissions.base import DjangoCoreModelPermissions, IsOwnerUserModelPermission
 from core.viewsets.mixins import AppModelViewSet
 from core.viewsets.base import CoreAttributeViewSet
 
@@ -35,7 +35,7 @@ class UserViewSet(
 
     def get_permissions(self):
         if self.action == "partial_update" or self.action == "update":
-            return [permission() for permission in [DjangoCoreModelPermissions | IsOwnerPermission]]
+            return [permission() for permission in [DjangoCoreModelPermissions | IsOwnerUserModelPermission]]
         return super().get_permissions()
 
 
