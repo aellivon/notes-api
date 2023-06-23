@@ -1,0 +1,71 @@
+version: v1.0
+name: Python Example
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu2004
+
+blocks:
+  - name: Install dependencies
+    task:
+      env_vars:
+        - name: PIPENV_VENV_IN_PROJECT
+          value: "true"
+      secrets:
+        - name: common
+      prologue:
+        commands:
+          - sudo pip install pipenv
+          - checkout
+      jobs:
+        - name: Install and cache dependencies
+          commands:
+            - cache restore pipenv-$SEMAPHORE_GIT_BRANCH-$(checksum Pipfile.lock),pipenv-$SEMAPHORE_GIT_BRANCH,pipenv-master
+            # --deploy also checks python version requirements
+            - pipenv install --dev --deploy
+            - cache store pipenv-$SEMAPHORE_GIT_BRANCH-$(checksum Pipfile.lock) .venv
+  - name: Code Analysis
+    task:
+      env_vars:
+        - name: PIPENV_VENV_IN_PROJECT
+          value: "true"
+      prologue:
+        commands:
+          - sudo pip install pipenv
+          - checkout
+          - cache restore pipenv-$SEMAPHORE_GIT_BRANCH-$(checksum Pipfile.lock),pipenv-$SEMAPHORE_GIT_BRANCH,pipenv-master
+      jobs:
+        - name: Flake8
+          commands:
+            # assuming you have "test" in your Pipfile scripts
+            - pipenv run flake8
+  - name: Tests
+    task:
+      env_vars:
+        - name: PIPENV_VENV_IN_PROJECT
+          value: "true"
+      secrets:
+        - name: common
+      prologue:
+        commands:
+          - sudo pip install pipenv
+          - sem-service start postgres 11
+          - sudo apt-get install -y -qq postgresql-client
+          - psql -U postgres -h localhost -c "CREATE USER $DATABASE_USER WITH PASSWORD '$DATABASE_PASSWORD';"
+          - psql -U postgres -h localhost -c "ALTER USER $DATABASE_USER WITH SUPERUSER;"
+          - createdb -U postgres -h 0.0.0.0 $DATABASE_NAME
+          - export postgres
+          - psql -U postgres -h 0.0.0.0  -c "\l" | grep $DATABASE_NAME
+          - sem-service status postgres
+          - checkout
+          - cache restore pipenv-$SEMAPHORE_GIT_BRANCH-$(checksum Pipfile.lock),pipenv-$SEMAPHORE_GIT_BRANCH,pipenv-master
+      jobs:
+        - name: Django Tests
+          commands:
+            - echo DATABASE_NAME=$DATABASE_NAME >> .env
+            - echo DATABASE_USER=$DATABASE_USER >> .env
+            - echo DATABASE_PASSWORD=$DATABASE_PASSWORD >> .env
+            - echo DATABASE_HOST=$DATABASE_HOST >> .env
+            - echo DATABASE_CONN_MAX_AGE=$DATABASE_CONN_MAX_AGE >> .env
+            - pipenv run python manage.py migrate
+            - pipenv run python manage.py test --noinput
