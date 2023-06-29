@@ -55,7 +55,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class OwnerUserSerializer(serializers.ModelSerializer):
     """
-        This serializer is for serializing User Models
+        This serializer is for serializing Owner User Models
     """
     avatar_url = Base64ImageField(max_length=None, use_url=True, required=False)
 
@@ -72,7 +72,7 @@ class OwnerUserSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
     """
-        This serializer is for serializing User Models
+        This serializer is for serializing Group Models
     """
     class Meta:
         model = Group

@@ -5,7 +5,7 @@ from rest_framework import serializers
 
 class KnowledgeBaseSerializer(serializers.ModelSerializer):
     """
-        This serializer is for serializing User Models
+        This serializer is for serializing Knowledgebase Models
     """
     class Meta:
         model = KnowledgeBase
